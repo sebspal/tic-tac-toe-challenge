@@ -10,17 +10,21 @@ db.init_app(app)
 game_service = GameService(match_repository=db)
 game_controller = GameController(game_service)
 
+
 @app.route('/create', methods=['POST'])
 def create_match():
     return game_controller.create_match()
+
 
 @app.route('/move', methods=['POST'])
 def make_move():
     return game_controller.make_move()
 
+
 @app.route('/status', methods=['GET'])
 def get_status():
     return game_controller.get_status()
+
 
 if __name__ == '__main__':
     with app.app_context():
