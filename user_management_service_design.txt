@@ -1,0 +1,93 @@
+Key Features:
+User Registration: Allow users to create an account with a username and password.
+User Authentication: Enable users to log in and log out securely.
+User Profile Management: Allow users to update their profile information.
+Match History: Track and display the history of matches played by each user.
+Player Statistics: Maintain and display statistics such as wins, losses, and draws for each user.
+API Changes
+New Endpoints
+User Registration
+
+Endpoint: /register
+Method: POST
+Payload:
+
+Response:
+Success: 201 Created
+Failure: 400 Bad Request (e.g., username already exists)
+User Authentication
+
+Endpoint: /login
+Method: POST
+Payload:
+
+Response:
+Success: 200 OK (with authentication token)
+Failure: 401 Unauthorized
+User Profile Management
+
+Endpoint: /profile
+Method: GET/PUT
+Payload (for PUT):
+
+Response:
+Success: 200 OK
+Failure: 400 Bad Request
+Match History
+
+Endpoint: /matches
+Method: GET
+Query Parameters: userId
+Response:
+Success: 200 OK (with list of matches)
+Failure: 404 Not Found
+Player Statistics
+
+Endpoint: /stats
+Method: GET
+Query Parameters: userId
+Response:
+Success: 200 OK (with user statistics)
+Failure: 404 Not Found
+Changes to Existing Endpoints
+Match Creation
+
+Endpoint: /create
+Method: POST
+Payload:
+
+Response:
+Success: 200 OK (with matchId)
+Failure: 400 Bad Request
+Move
+
+Endpoint: /move
+Method: POST
+Payload:
+
+Response:
+Success: 200 OK
+Failure: 400 Bad Request
+Database Structure Changes
+New Tables
+Users
+
+Columns:
+id: Integer, Primary Key
+username: String, Unique
+password_hash: String
+User Matches
+
+Columns:
+id: Integer, Primary Key
+user_id: Integer, Foreign Key (references Users.id)
+match_id: Integer, Foreign Key (references Matches.id)
+Modified Tables
+Matches
+New Columns:
+user_id: Integer, Foreign Key (references Users.id)
+Architectural Design Changes
+Authentication Middleware: Implement middleware to handle user authentication and authorization for protected endpoints.
+Token-Based Authentication: Use JWT (JSON Web Tokens) for secure user sessions.
+Database Migrations: Use a tool like Alembic to manage database schema changes.
+Service Layer: Introduce a service layer to handle user-related business logic, separate from match logic.
