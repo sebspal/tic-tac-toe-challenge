@@ -1,32 +1,42 @@
 from flask import Flask
+from flask_cors import CORS
 from service.frameworks.database import db
 from service.controllers.match_controller import GameController
 from service.usecases.game_service import GameService
-
-app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///tictactoe.db'
-db.init_app(app)
-
-game_service = GameService(match_repository=db)
-game_controller = GameController(game_service)
+from service.frameworks.database import MatchRepository
+from config import Config
 
 
-@app.route('/create', methods=['POST'])
-def create_match():
-    return game_controller.create_match()
+def create_app():
+    app = Flask(__name__)
+    app.config.from_object(Config)
 
+    CORS(app)
+    db.init_app(app)
 
-@app.route('/move', methods=['POST'])
-def make_move():
-    return game_controller.make_move()
-
-
-@app.route('/status', methods=['GET'])
-def get_status():
-    return game_controller.get_status()
-
-
-if __name__ == '__main__':
     with app.app_context():
         db.create_all()
+
+    match_repository = MatchRepository()
+    game_service = GameService(match_repository)
+    game_controller = GameController(game_service)
+
+    @app.route('/create', methods=['POST'])
+    def create_match():
+        return game_controller.create_match()
+
+    @app.route('/move', methods=['POST'])
+    def make_move():
+        return game_controller.make_move()
+
+    @app.route('/status', methods=['GET'])
+    def get_status():
+        return game_controller.get_status()
+
+    return app
+
+
+app = create_app()
+
+if __name__ == '__main__':
     app.run(debug=True)
