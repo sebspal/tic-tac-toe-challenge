@@ -1,6 +1,14 @@
 import pytest
 from service.usecases.game_service import GameService
 from service.frameworks.database import db, MatchRepository
+from service.frameworks.flask_app import create_app
+
+
+@pytest.fixture()
+def app():
+    app = create_app()
+    yield app
+
 
 @pytest.fixture
 def match_repository(app):
@@ -9,9 +17,11 @@ def match_repository(app):
         yield MatchRepository()
         db.drop_all()
 
+
 @pytest.fixture
 def game_service(match_repository):
     return GameService(match_repository)
+
 
 def test_create_match(game_service):
     match = game_service.create_match()
@@ -19,6 +29,7 @@ def test_create_match(game_service):
     assert match.board == [' '] * 9
     assert match.turn == 'X'
     assert match.state == 'ongoing'
+
 
 def test_make_move(game_service):
     match = game_service.create_match()
